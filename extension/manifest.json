@@ -2,18 +2,19 @@
   "manifest_version": 3,
   "name": "JobFit AI",
   "version": "1.0.0",
-  "description": "AI-powered job description analyzer and resume matcher.",
+  "description": "AI-powered resume & job description matcher. Get your match score instantly.",
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "alarms"
   ],
   "host_permissions": [
     "https://*.linkedin.com/*",
     "https://*.indeed.com/*",
     "https://*.glassdoor.com/*",
     "https://*.wellfound.com/*",
-    "https://your-vercel-app-name.vercel.app/*" 
+    "https://jobfit-ai-extension.vercel.app/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -24,11 +25,16 @@
     }
   },
   "background": {
-    "service_workgit remote add origin https://github.com/Mahajan-Sachin/jobfit-ai-extension.giter": "background.js"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://*.linkedin.com/jobs/*",
+        "https://*.indeed.com/*",
+        "https://*.glassdoor.com/*",
+        "https://*.wellfound.com/*"
+      ],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

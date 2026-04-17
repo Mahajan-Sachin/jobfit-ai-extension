@@ -7,7 +7,6 @@ __pycache__/
 env/
 venv/
 ENV/
-requirements.txt
 
 # Node/NPM
 node_modules/
@@ -22,9 +21,11 @@ build/
 *.swp
 *.swo
 
-# Secrets
+# Secrets — never commit these
 .env
 .env.local
 .env.*.local
-.env
-.env.local
+
+# OS
+.DS_Store
+Thumbs.db

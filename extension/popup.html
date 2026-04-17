@@ -4,27 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JobFit AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div class="container">
-        <h2>JobFit AI 🚀</h2>
-        
-        <!-- Section 1: Setup Profile -->
-        <div id="setup-section">
-            <p class="notice">🔒 Privacy First: We recommend removing sensitive details (phone, email) before pasting. Your data stays local.</p>
-            <textarea id="resume-input" placeholder="Paste your resume text here..."></textarea>
-            <button id="save-btn">Save Profile</button>
-            <p id="status-msg"></p>
+    <div class="popup-wrapper">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">JobFit <strong>AI</strong></span>
+            </div>
+            <div id="usage-badge" class="usage-badge" title="Daily analyses remaining"></div>
+        </header>
+
+        <!-- SCREEN 1: Setup Profile -->
+        <div id="screen-setup" class="screen active">
+            <div class="notice">
+                🔒 <strong>Privacy First:</strong> Remove emails & phone numbers before pasting. Your data never leaves your device.
+            </div>
+            <label class="field-label" for="resume-input">Paste your resume text</label>
+            <textarea id="resume-input" placeholder="e.g. John Doe | Software Engineer | 3 years at Infosys&#10;Skills: Python, Django, AWS, React..."></textarea>
+            <div id="char-count" class="char-count">0 characters</div>
+            <button id="save-btn" class="btn btn-primary">
+                <span id="save-btn-text">✨ Analyze & Save Profile</span>
+                <span id="save-spinner" class="spinner hidden"></span>
+            </button>
+            <p id="status-msg" class="status-msg"></p>
         </div>
 
-        <!-- Section 2: Profile Status (Hidden by default) -->
-        <div id="profile-status" style="display: none;">
-            <p><strong>Profile Saved!</strong></p>
-            <p>Skills: <span id="saved-skills">...</span></p>
-            <p>Exp: <span id="saved-exp">...</span> years</p>
-            <button id="reset-btn">Update Profile</button>
+        <!-- SCREEN 2: Profile Saved -->
+        <div id="screen-profile" class="screen hidden">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <span class="avatar">👤</span>
+                    <div>
+                        <p class="profile-title">Your Profile</p>
+                        <p class="profile-meta" id="profile-updated"></p>
+                    </div>
+                    <button id="reset-btn" class="btn-icon" title="Update Profile">✏️</button>
+                </div>
+                <div class="stat-row">
+                    <div class="stat">
+                        <span class="stat-label">Experience</span>
+                        <span class="stat-value" id="saved-exp">—</span>
+                        <span class="stat-unit">yrs</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Skills Found</span>
+                        <span class="stat-value" id="skill-count">—</span>
+                    </div>
+                </div>
+                <div class="skills-wrap">
+                    <p class="skills-label">Detected Skills</p>
+                    <div id="skills-chips" class="chips"></div>
+                </div>
+            </div>
+            <div class="info-box">
+                <span>💡</span>
+                <p>Open any LinkedIn or Indeed job listing and click the <strong>"Analyze with JobFit AI"</strong> button that appears on the page.</p>
+            </div>
         </div>
+
+        <!-- SCREEN 3: Rate Limit Hit -->
+        <div id="screen-limit" class="screen hidden">
+            <div class="limit-card">
+                <div class="limit-icon">🚦</div>
+                <h2 class="limit-title">Daily Limit Reached</h2>
+                <p class="limit-msg">You've used all <strong>20 free analyses</strong> for today. Resets at midnight.</p>
+                <button class="btn btn-secondary" id="waitlist-btn">🚀 Join Pro Waitlist</button>
+                <p class="limit-reset" id="reset-timer"></p>
+            </div>
+        </div>
+
     </div>
     <script src="popup.js"></script>
 </body>
