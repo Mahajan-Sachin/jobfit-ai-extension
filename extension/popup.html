@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobFit AI</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <h2>JobFit AI 🚀</h2>
+        
+        <!-- Section 1: Setup Profile -->
+        <div id="setup-section">
+            <p class="notice">🔒 Privacy First: We recommend removing sensitive details (phone, email) before pasting. Your data stays local.</p>
+            <textarea id="resume-input" placeholder="Paste your resume text here..."></textarea>
+            <button id="save-btn">Save Profile</button>
+            <p id="status-msg"></p>
+        </div>
+
+        <!-- Section 2: Profile Status (Hidden by default) -->
+        <div id="profile-status" style="display: none;">
+            <p><strong>Profile Saved!</strong></p>
+            <p>Skills: <span id="saved-skills">...</span></p>
+            <p>Exp: <span id="saved-exp">...</span> years</p>
+            <button id="reset-btn">Update Profile</button>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
