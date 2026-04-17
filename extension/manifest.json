@@ -24,7 +24,7 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_workgit remote add origin https://github.com/Mahajan-Sachin/jobfit-ai-extension.giter": "background.js"
   },
   "content_scripts": [
     {
