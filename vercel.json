@@ -2,10 +2,10 @@
   "version": 2,
   "functions": {
     "api/extract_skills.py": {
-      "runtime": "python3"
+      "runtime": "python3.11"
     },
     "api/analyze.py": {
-      "runtime": "python3"
+      "runtime": "python3.11"
     }
   }
 }
