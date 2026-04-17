@@ -1,7 +1,17 @@
 # test_api.py
-import extract_skills
-import analyze
+import importlib.util
 import json
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parent
+
+spec_extract = importlib.util.spec_from_file_location('extract_skills', BASE / 'extract-skills.py')
+extract_skills = importlib.util.module_from_spec(spec_extract)
+spec_extract.loader.exec_module(extract_skills)
+
+spec_analyze = importlib.util.spec_from_file_location('analyze', BASE / 'analyze.py')
+analyze = importlib.util.module_from_spec(spec_analyze)
+spec_analyze.loader.exec_module(analyze)
 
 # Mock Request Object
 class MockRequest:
