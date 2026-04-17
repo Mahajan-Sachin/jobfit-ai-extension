@@ -1,15 +1,19 @@
 import json
 import os
+from dotenv import load_dotenv
 from groq import Groq
+
+load_dotenv()
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def main(request):
-    if request.method != "POST":
-        return {"error": "Method not allowed"}, 405
-
     try:
-        data = json.loads(request.data)
+        body = request.get_data(as_text=True)
+        if not body:
+            return {"error": "No body provided"}, 400
+            
+        data = json.loads(body)
         jd_text = data.get("jobDescription", "")
         user_skills = data.get("userSkills", [])
         user_exp = data.get("experienceYears", 0)
@@ -17,7 +21,6 @@ def main(request):
         if not jd_text or not user_skills:
             return {"error": "Missing JD or User Skills"}, 400
 
-        # Prompt for Analysis
         prompt = f"""
         You are a helpful career assistant. Compare the candidate's profile with the Job Description.
         
