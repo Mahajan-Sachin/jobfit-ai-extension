@@ -1,5 +1,10 @@
 {
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.py" }
-  ]
+  ],
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.11"
+    }
+  }
 }

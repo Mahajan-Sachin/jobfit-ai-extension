@@ -7,9 +7,10 @@ load_dotenv()
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-def main(request):
+def handler(request):
+    # CORS handling
     if request.method == 'OPTIONS':
-        return '', 200
+        return '', 200, {"Access-Control-Allow-Origin": "*"}
 
     try:
         data = json.loads(request.data.decode('utf-8'))
