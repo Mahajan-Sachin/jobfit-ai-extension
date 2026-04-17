@@ -2,10 +2,10 @@
   "version": 1,
   "functions": {
     "extract_skills.py": {
-      "runtime": "python3.9"
+      "runtime": "python"
     },
     "analyze.py": {
-      "runtime": "python3.9"
+      "runtime": "python"
     }
   }
 }
