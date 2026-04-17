@@ -3,20 +3,22 @@ import os
 from dotenv import load_dotenv
 from groq import Groq
 
-# Load environment variables from .env file (for local development)
+# Load environment variables
 load_dotenv()
 
-# Initialize Groq client using the API Key from Environment Variables
-# This works locally (via .env) and on Vercel (via Dashboard Settings)
+# Initialize Groq client
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def main(request):
-    # Only allow POST requests
-    if request.method != "POST":
-        return {"error": "Method not allowed"}, 405
-
+    # Vercel sends data in request.get_data() or request.data depending on version
+    # We need to handle both string and bytes
     try:
-        data = json.loads(request.data)
+        # Get raw data
+        body = request.get_data(as_text=True)
+        if not body:
+            return {"error": "No body provided"}, 400
+        
+        data = json.loads(body)
         resume_text = data.get("text", "")
 
         if not resume_text:
@@ -44,11 +46,11 @@ def main(request):
         """
 
         completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant", # Fast and cheap model
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.2, # Low temp for consistent JSON output
+            temperature=0.2,
             max_tokens=500,
-            response_format={"type": "json_object"} # Force JSON output
+            response_format={"type": "json_object"}
         )
 
         result = completion.choices[0].message.content
