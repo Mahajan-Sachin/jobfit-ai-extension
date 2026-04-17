@@ -3,46 +3,37 @@ import os
 from dotenv import load_dotenv
 from groq import Groq
 
-# Load environment variables
 load_dotenv()
 
-# Initialize Groq client
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def main(request):
-    # Vercel sends data in request.get_data() or request.data depending on version
-    # We need to handle both string and bytes
+    # 1. Handle CORS (Optional but good for debugging)
+    if request.method == 'OPTIONS':
+        return '', 200
+
     try:
-        # Get raw data
-        body = request.get_data(as_text=True)
-        if not body:
-            return {"error": "No body provided"}, 400
+        # 2. Parse JSON Body
+        # Vercel passes body as bytes in request.data
+        data = json.loads(request.data.decode('utf-8'))
         
-        data = json.loads(body)
         resume_text = data.get("text", "")
-
         if not resume_text:
-            return {"error": "No resume text provided"}, 400
+            return json.dumps({"error": "No text provided"}), 400
 
-        # Prompt for Skill Extraction & Experience Calculation
+        # 3. Call Groq
         prompt = f"""
-        You are an expert HR analyst. Analyze the following resume text.
+        You are an expert HR analyst. Analyze this resume text.
+        1. Extract technical skills as a list.
+        2. Calculate total years of experience (handle gaps, 'Present' dates).
         
-        1. Extract a list of technical skills (programming languages, frameworks, tools, databases).
-        2. Calculate the total years of professional experience. 
-           - If dates are like 'Dec 2017 - Jan 2020', count the duration.
-           - If 'Present' or 'Current' is used, use today's date.
-           - Subtract gaps between jobs.
-           - Return only the numeric value (e.g., 4.5).
-        
-        Return ONLY a valid JSON object with this structure:
+        Return ONLY JSON:
         {{
             "skills": ["Skill1", "Skill2"],
             "experience_years": 0.0
         }}
 
-        Resume Text:
-        {resume_text[:3000]} 
+        Text: {resume_text[:3000]}
         """
 
         completion = client.chat.completions.create(
@@ -54,9 +45,7 @@ def main(request):
         )
 
         result = completion.choices[0].message.content
-        
-        # Parse and return the JSON
-        return json.loads(result), 200
+        return result, 200, {'Content-Type': 'application/json'}
 
     except Exception as e:
-        return {"error": str(e)}, 500
+        return json.dumps({"error": str(e)}), 500

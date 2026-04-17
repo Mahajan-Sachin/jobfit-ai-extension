@@ -8,36 +8,32 @@ load_dotenv()
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def main(request):
+    if request.method == 'OPTIONS':
+        return '', 200
+
     try:
-        body = request.get_data(as_text=True)
-        if not body:
-            return {"error": "No body provided"}, 400
-            
-        data = json.loads(body)
+        data = json.loads(request.data.decode('utf-8'))
+        
         jd_text = data.get("jobDescription", "")
         user_skills = data.get("userSkills", [])
         user_exp = data.get("experienceYears", 0)
 
         if not jd_text or not user_skills:
-            return {"error": "Missing JD or User Skills"}, 400
+            return json.dumps({"error": "Missing data"}), 400
 
         prompt = f"""
-        You are a helpful career assistant. Compare the candidate's profile with the Job Description.
+        Compare candidate to Job Description.
         
-        Candidate Profile:
-        - Skills: {json.dumps(user_skills)}
-        - Experience: {user_exp} years
+        Candidate: Skills={json.dumps(user_skills)}, Exp={user_exp} yrs
+        JD: {jd_text[:3000]}
 
-        Job Description:
-        {jd_text[:3000]}
-
-        Return ONLY a valid JSON object with this structure:
+        Return ONLY JSON:
         {{
             "matchScore": 0-100,
-            "missingSkills": ["Skill1", "Skill2"],
-            "matchingSkills": ["SkillA", "SkillB"],
-            "summary": "A concise 2-sentence summary of the fit.",
-            "actionableTips": ["Tip 1", "Tip 2"]
+            "missingSkills": ["Skill1"],
+            "matchingSkills": ["SkillA"],
+            "summary": "Short summary.",
+            "actionableTips": ["Tip 1"]
         }}
         """
 
@@ -50,7 +46,7 @@ def main(request):
         )
 
         result = completion.choices[0].message.content
-        return json.loads(result), 200
+        return result, 200, {'Content-Type': 'application/json'}
 
     except Exception as e:
-        return {"error": str(e)}, 500
+        return json.dumps({"error": str(e)}), 500
