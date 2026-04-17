@@ -36,48 +36,36 @@ def handler(request):
 
     try:
         data = json.loads(request.body.decode('utf-8'))
+        resume_text = data.get("text", "").strip()
 
-        jd_text = data.get("jobDescription", "").strip()
-        user_skills = data.get("userSkills", [])
-        user_exp = data.get("experienceYears", 0)
-
-        if not jd_text or not user_skills:
+        if not resume_text:
             return {
                 'statusCode': 400,
                 'headers': {
                     'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json'
                 },
-                'body': json.dumps({"error": "Missing jobDescription or userSkills"})
+                'body': json.dumps({"error": "No text provided"})
             }
 
-        prompt = f"""You are an expert technical recruiter and career coach.
-
-Compare the candidate's profile to the Job Description below.
-
-Candidate:
-- Skills: {json.dumps(user_skills)}
-- Years of Experience: {user_exp}
-
-Job Description:
-{jd_text[:3000]}
+        prompt = f"""You are an expert HR analyst. Analyze this resume text.
+1. Extract technical skills as a list (languages, frameworks, tools, cloud, databases).
+2. Calculate total years of experience. Handle gaps and "Present" dates correctly.
 
 Return ONLY valid JSON:
 {{
-    "matchScore": 75,
-    "matchingSkills": ["Python", "AWS"],
-    "missingSkills": ["Docker", "Kubernetes"],
-    "summary": "Two sentence fit summary.",
-    "actionableTips": ["Tip 1.", "Tip 2.", "Tip 3."]
+    "skills": ["Python", "Django"],
+    "experience_years": 3.0
 }}
 
-matchScore must be an integer 0-100.
+Resume:
+{resume_text[:3000]}
 """
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-            max_tokens=700,
+            temperature=0.2,
+            max_tokens=500,
             response_format={"type": "json_object"}
         )
         result = completion.choices[0].message.content

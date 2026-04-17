@@ -117,7 +117,7 @@ async function handleSave() {
     setStatus("Analyzing your resume with AI...", "info");
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/extract-skills`, {
+        const response = await fetch(`${API_BASE_URL}/api/extract_skills`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text })

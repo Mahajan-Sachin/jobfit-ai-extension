@@ -7,16 +7,16 @@ import json
 class MockRequest:
     def __init__(self, data_dict):
         self.method = "POST"
-        self.data = json.dumps(data_dict).encode('utf-8')
+        self.body = json.dumps(data_dict).encode('utf-8')
 
 # Test 1: Extract Skills
 print("--- Testing Skill Extraction ---")
 mock_resume = MockRequest({
     "text": "Sachin Mahajan. Python Developer. Worked at Google from Jan 2020 to Dec 2022. Skills: Python, Django, SQL."
 })
-result, status = extract_skills.main(mock_resume)
-print(f"Status: {status}")
-print(f"Result: {result}\n")
+response = extract_skills.handler(mock_resume)
+print(f"Status: {response['statusCode']}")
+print(f"Result: {response['body']}\n")
 
 # Test 2: Analyze Job
 print("--- Testing Job Analysis ---")
@@ -25,6 +25,6 @@ mock_job = MockRequest({
     "userSkills": ["Python", "Django", "SQL"],
     "experienceYears": 2.5
 })
-result, status = analyze.main(mock_job)
-print(f"Status: {status}")
-print(f"Result: {result}")
+response = analyze.handler(mock_job)
+print(f"Status: {response['statusCode']}")
+print(f"Result: {response['body']}")
